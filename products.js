@@ -18,6 +18,16 @@ const products = [
     alt: "corn thins",
     description: "Gluten-free corn cakes with sesame",
   },
+
+  {
+    id: 3,
+    name: "Third product",
+    price: 5,
+    image:
+      "https://hdv7r2idik-flywheel.netdna-ssl.com/wp-content/uploads/2018/12/product-image-placeholder.jpg",
+    alt: "product 3",
+    description: "Third product placeholder",
+  },
 ];
 
 module.exports = products;
