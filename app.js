@@ -2,6 +2,7 @@ const express = require("express");
 let products = require("./products");
 const cors = require("cors");
 const slugify = require("slugify");
+const db = require("./db/models");
 
 const app = express();
 
@@ -37,6 +38,23 @@ app.post("/products", (request, response) => {
   response.status(201).json(newProduct);
 });
 
-app.listen(8000, () => {
-  console.log("The application is running on localhost: 8000");
-});
+//------Old listen-------
+// app.listen(8000, () => {
+//   console.log("The application is running on localhost: 8000");
+// });
+
+//with db connection
+const run = async () => {
+  try {
+    await db.sequelize.sync();
+    console.log("Successfully connected to database!");
+  } catch (error) {
+    console.error("Error connecting to database: ", error);
+  }
+
+  await app.listen(8000, () => {
+    console.log("The application is running on localhost: 8000");
+  });
+};
+
+run();
