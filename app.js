@@ -3,11 +3,21 @@ let products = require("./products");
 const cors = require("cors");
 const slugify = require("slugify");
 const db = require("./db/models");
+const path = require("path");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json()); //replacing body parser
+//middleware
+// app.use((request, response, next) => {
+//   console.log("I'm the middleware!");
+//   request.url = "/products";
+//   next();
+// });
+
+// console.log(__dirname);
+// app.use("/media", express.static(path.join(__dirname, "media")));
 
 app.get("/", (request, response) => {
   response.json({
@@ -36,6 +46,15 @@ app.post("/products", (request, response) => {
   const newProduct = { id, slug, ...request.body };
   products.push(newProduct);
   response.status(201).json(newProduct);
+});
+
+app.put("/products/:productID", (request, response) => {
+  const { productID } = request.params;
+  const foundProduct = products.find((product) => product.id === +productID);
+  if (foundProduct) {
+    for (const key in request.body) foundProduct[key] = request.body[key];
+    response.status(204).end();
+  } else response.status(404).json({ message: "Product not found!" });
 });
 
 //------Old listen-------
