@@ -24,7 +24,7 @@ app.use("/products", productRoutes);
 //with db connection
 const run = async () => {
   try {
-    await db.sequelize.sync({ alter: true });
+    await db.sequelize.sync({ alter: true }); //alter:true to allow altering data (e.g. adding columns when .define() is updated)
     console.log("Successfully connected to database!");
   } catch (error) {
     console.error("Error connecting to database: ", error);

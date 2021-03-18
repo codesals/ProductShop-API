@@ -39,13 +39,28 @@ exports.productCreate = async (request, response) => {
   }
 };
 
-exports.productUpdate = (request, response) => {
+// data.js Update
+// exports.productUpdate = (request, response) => {
+//   const { productID } = request.params;
+//   const foundProduct = products.find((product) => product.id === +productID);
+//   if (foundProduct) {
+//     for (const key in request.body) foundProduct[key] = request.body[key];
+//     response.status(204).end();
+//   } else response.status(404).json({ message: "Product not found!" });
+// };
+
+//db Update
+exports.productUpdate = async (request, response) => {
   const { productID } = request.params;
-  const foundProduct = products.find((product) => product.id === +productID);
-  if (foundProduct) {
-    for (const key in request.body) foundProduct[key] = request.body[key];
-    response.status(204).end();
-  } else response.status(404).json({ message: "Product not found!" });
+  try {
+    const foundProduct = await Product.findByPk(productID);
+    if (foundProduct) {
+      await foundProduct.update(request.body);
+      response.status(204).end();
+    } else response.status(404).json({ message: "Product not found!" });
+  } catch (error) {
+    response.status(500).json({ message: error.message });
+  }
 };
 
 exports.productDelete = (request, response) => {
