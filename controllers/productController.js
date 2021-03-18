@@ -4,7 +4,7 @@ const slugify = require("slugify");
 const { Product } = require("../db/models");
 // const { response } = require("express"); //appeared automatically
 
-//old list
+//data.js list
 // exports.productList = (_, response) => response.json(products);
 
 //db List
@@ -20,12 +20,23 @@ exports.productList = async (_, response) => {
   }
 };
 
-exports.productCreate = (request, response) => {
-  const id = products[products.length - 1].id + 1;
-  const slug = slugify(request.body.name, { lower: true });
-  const newProduct = { id, slug, ...request.body };
-  products.push(newProduct);
-  response.status(201).json(newProduct);
+// data.js Create
+// exports.productCreate = (request, response) => {
+//   const id = products[products.length - 1].id + 1;
+//   const slug = slugify(request.body.name, { lower: true });
+//   const newProduct = { id, slug, ...request.body };
+//   products.push(newProduct);
+//   response.status(201).json(newProduct);
+// };
+
+//db Create
+exports.productCreate = async (request, response) => {
+  try {
+    const newProduct = await Product.create(request.body);
+    response.status(201).json(newProduct);
+  } catch (error) {
+    response.status(500).json({ message: error.message });
+  }
 };
 
 exports.productUpdate = (request, response) => {

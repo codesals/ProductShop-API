@@ -1,11 +1,19 @@
 // const { DataTypes } = require("sequelize/types");
 // const { sequelize } = require(".");
+const SequelizeSlugify = require("sequelize-slugify");
 
 module.exports = (sequelize, DataTypes) => {
-  return sequelize.define("Product", {
+  const Product = sequelize.define("Product", {
     name: {
       type: DataTypes.STRING,
     },
+    slug: {
+      type: DataTypes.STRING,
+      unique: true,
+    },
+    // testAddColumn: {
+    //   type: DataTypes.STRING,
+    // },
     description: {
       type: DataTypes.STRING,
     },
@@ -16,4 +24,8 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
     },
   });
+  SequelizeSlugify.slugifyModel(Product, {
+    source: ["name"],
+  });
+  return Product;
 };
