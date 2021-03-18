@@ -1,15 +1,17 @@
 const express = require("express");
-let products = require("./products");
 const cors = require("cors");
-const slugify = require("slugify");
 const db = require("./db/models");
 const path = require("path");
+const productRoutes = require("./routes/products");
+const homeRoute = require("./routes/home");
 
 const app = express();
 
+//middleware
 app.use(cors());
 app.use(express.json()); //replacing body parser
-//middleware
+app.use(homeRoute);
+app.use("/products", productRoutes);
 // app.use((request, response, next) => {
 //   console.log("I'm the middleware!");
 //   request.url = "/products";
@@ -18,49 +20,6 @@ app.use(express.json()); //replacing body parser
 
 // console.log(__dirname);
 // app.use("/media", express.static(path.join(__dirname, "media")));
-
-app.get("/", (request, response) => {
-  response.json({
-    message:
-      "This is the homepage running on localhost:8000. Go to localhost:8000/products to view product data.",
-  });
-});
-
-app.get("/products", (request, response) => {
-  response.json(products);
-});
-
-app.delete("/products/:productID", (request, response) => {
-  const { productID } = request.params; // same as const productID  = request.params.productID;
-  const foundProduct = products.find((product) => product.id === +productID);
-  if (foundProduct) {
-    products = products.filter((product) => product.id !== +foundProduct.id);
-    response.status(204).end();
-  } else response.status(404).json({ message: "Product not found!" });
-  // response.json(products);
-});
-
-app.post("/products", (request, response) => {
-  const id = products[products.length - 1].id + 1;
-  const slug = slugify(request.body.name, { lower: true });
-  const newProduct = { id, slug, ...request.body };
-  products.push(newProduct);
-  response.status(201).json(newProduct);
-});
-
-app.put("/products/:productID", (request, response) => {
-  const { productID } = request.params;
-  const foundProduct = products.find((product) => product.id === +productID);
-  if (foundProduct) {
-    for (const key in request.body) foundProduct[key] = request.body[key];
-    response.status(204).end();
-  } else response.status(404).json({ message: "Product not found!" });
-});
-
-//------Old listen-------
-// app.listen(8000, () => {
-//   console.log("The application is running on localhost: 8000");
-// });
 
 //with db connection
 const run = async () => {
