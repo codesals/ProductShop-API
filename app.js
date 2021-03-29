@@ -10,6 +10,11 @@ const app = express();
 //middleware
 app.use(cors());
 app.use(express.json()); //replacing body parser
+app.use((_, __, next) => {
+  console.log("I'm a middleware method");
+  next();
+});
+
 app.use(homeRoute);
 app.use("/products", productRoutes);
 // app.use((request, response, next) => {
@@ -20,6 +25,19 @@ app.use("/products", productRoutes);
 
 // console.log(__dirname);
 // app.use("/media", express.static(path.join(__dirname, "media")));
+
+//path not found middleware
+app.use((_, response, next) => {
+  response.status(404).json({ message: "Path not found" });
+});
+
+//error handling middleware
+app.use((error, request, response, next) => {
+  response.status(error.status || 500);
+  response.json({
+    message: error.message || "Internal Server Error",
+  });
+});
 
 //with db connection
 const run = async () => {

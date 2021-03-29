@@ -8,9 +8,14 @@ const {
   productDelete,
 } = require("../controllers/productController");
 
-router.post("/", productCreate);
-
 router.get("/", productList);
+
+router.use((_, __, next) => {
+  console.log("I'm another middleware method");
+  next();
+});
+
+router.post("/", productCreate);
 
 router.put("/:productID", productUpdate);
 

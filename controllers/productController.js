@@ -4,6 +4,15 @@ const slugify = require("slugify");
 const { Product } = require("../db/models");
 // const { response } = require("express"); //appeared automatically
 
+exports.fetchProduct = async (productID, next) => {
+  try {
+    const product = await Product.findByPk(productID);
+    return product;
+  } catch (error) {
+    next(error);
+  }
+};
+
 //db List
 exports.productList = async (_, response) => {
   try {
@@ -13,22 +22,24 @@ exports.productList = async (_, response) => {
     console.log("products", products);
     response.json(products);
   } catch (error) {
-    response.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
 //db Create
-exports.productCreate = async (request, response) => {
+exports.productCreate = async (request, response, next) => {
   try {
     const newProduct = await Product.create(request.body);
     response.status(201).json(newProduct);
   } catch (error) {
-    response.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
 //db Update
-exports.productUpdate = async (request, response) => {
+//yet to make it work with fetchProduct
+//check try/catch logic
+exports.productUpdate = async (request, response, next) => {
   const { productID } = request.params;
   try {
     const foundProduct = await Product.findByPk(productID);
@@ -37,7 +48,7 @@ exports.productUpdate = async (request, response) => {
       response.status(204).end();
     } else response.status(404).json({ message: "Product not found!" });
   } catch (error) {
-    response.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
@@ -51,19 +62,9 @@ exports.productDelete = async (request, response) => {
       response.status(204).end();
     } else response.status(404).json({ message: "Product not found!" });
   } catch (error) {
-    response.status(500).json({ message: error.message });
+    next(error);
   }
 };
-
-// exports.productDelete = (request, response) => {
-//   const { productID } = request.params; // same as const productID  = request.params.productID;
-//   const foundProduct = products.find((product) => product.id === +productID);
-//   if (foundProduct) {
-//     products = products.filter((product) => product.id !== +foundProduct.id);
-//     response.status(204).end();
-//   } else response.status(404).json({ message: "Product not found!" });
-//   // response.json(products);
-// };
 
 //data.js List
 // exports.productList = (_, response) => response.json(products);
